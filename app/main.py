@@ -5,9 +5,9 @@ from fastapi.staticfiles import StaticFiles
 from starlette.middleware.sessions import SessionMiddleware
 from dotenv import load_dotenv
 import static
-from app.routes import index, panel
+from app.routes import index, panel, connection
 
-routers = (index.router, panel.router,)
+routers = (index.router, panel.router, connection.router)
 load_dotenv()
 app = FastAPI()
 app.mount(

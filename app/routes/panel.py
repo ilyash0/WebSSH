@@ -1,4 +1,7 @@
-from fastapi import APIRouter, Request
+from fastapi import APIRouter, Request, UploadFile, File
+from typing import List
+from shutil import copyfileobj
+from os import remove
 from starlette.responses import RedirectResponse
 from traceback import print_exception
 
@@ -35,14 +38,34 @@ def reboot_remote(request: Request = Request):
                                                          "username": request.session["username"]})
 
 
-@router.get("/disconnect/")
-def disconnect(request: Request = Request):
+@router.post("/upload/")
+async def upload_file(files_list: List[UploadFile] = File(...), request: Request = Request):
+    if not files_list:
+        raise templates.TemplateResponse("panel.html", {"request": request, "danger": "Ошибка: отсутствует файл",
+                                                        "hostname": request.session["hostname"],
+                                                        "username": request.session["username"]})
+
     try:
         ssh = connections[request.headers.get("user-agent")]
-        ssh.close()
-        connections.pop(request.headers.get("user-agent"))
-        request.session.pop("password")
-        return RedirectResponse(url="/")
+        if not ssh:
+            raise templates.TemplateResponse("panel.html", {"request": request,
+                                                            "danger": "Ошибка: Не удалось подключиться к компьютеру",
+                                                            "hostname": request.session["hostname"],
+                                                            "username": request.session["username"]})
+
+        sftp_client = ssh.open_sftp()
+        for file in files_list:
+            # Create a temporary file to save the downloaded file
+            with open(file.filename, "wb") as buffer:
+                copyfileobj(file.file, buffer)
+            sftp_client.put(file.filename, f"/home/{request.session['username']}/{file.filename}")
+            remove(file.filename)
+
+        sftp_client.close()
+        return templates.TemplateResponse("panel.html",
+                                          {"request": request, "success": f"{len(files_list)} файла успешно переданы",
+                                           "hostname": request.session["hostname"],
+                                           "username": request.session["username"]})
     except Exception as e:
         print_exception(type(e), e, e.__traceback__)
         return templates.TemplateResponse("panel.html", {"request": request, "danger": f"Ошибка: {e}",

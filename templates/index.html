@@ -5,9 +5,33 @@
     <link rel="stylesheet" href="/static/style.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
           integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <script src="/static/main.js"></script>
     <title>WebSSH</title>
 </head>
 <body>
-<h1 class="title">WebSSH</h1>
+<h1 class="centered">WebSSH</h1>
+<div id="alert-box" class="alert centered" style="width: 35%"></div>
+<div class="card centered bg-secondary text-white border-secondary-subtle" style="width: 35%">
+    <div class="card-body">
+        <h2 class="centered">Подключиться к машине</h2>
+        <form name="connection_form" onsubmit="connect(host.value, username.value, password.value); return false">
+            <div class="mb-3">
+                <label for="host" class="form-label">Адрес и порт</label>
+                <input type="text" class="form-control" id="host" required>
+            </div>
+            <div class="mb-3">
+                <label for="username" class="form-label">Имя пользователя</label>
+                <input type="text" class="form-control" id="username" required>
+            </div>
+            <div class="mb-3">
+                <label for="password" class="form-label">Пароль</label>
+                <input type="password" class="form-control" id="password" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Подключиться</button>
+            <div class="loading-indicator" id="loading-indicator"></div>
+        </form>
+
+    </div>
+</div>
 </body>
 </html>
