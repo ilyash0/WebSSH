@@ -10,7 +10,7 @@ function connect(host, username, password) {
         if (XHR.readyState === XMLHttpRequest.DONE && XHR.status === 200) {
             document.location.href = "/panel"
         } else if (XHR.status >= 400) {
-            document.getElementById("alert-box").classList.add("alert-warning")
+            document.getElementById("alert-box").classList.add("alert-danger")
             document.getElementById("alert-box").innerText = `Ошибка ${XHR.status}: ${JSON.parse(XHR.responseText).detail}`
         }
         hide_loading_indicator();
@@ -42,7 +42,7 @@ function send_reboot() {
             ALERT_BOX.classList.add("alert-success")
             ALERT_BOX.innerText = `Машина успешно перезагружена. Соединение оборвано`
         } else if (XHR.status >= 400) {
-            ALERT_BOX.classList.add("alert-warning")
+            ALERT_BOX.classList.add("alert-danger")
             ALERT_BOX.innerText = `Ошибка ${XHR.status}: ${JSON.parse(XHR.responseText).detail}`
         }
     };
@@ -58,7 +58,7 @@ function disconnect() {
         if (XHR.readyState === XMLHttpRequest.DONE && XHR.status === 200) {
             document.location.href = "/"
         } else if (XHR.status >= 400) {
-            ALERT_BOX.classList.add("alert-warning")
+            ALERT_BOX.classList.add("alert-danger")
             ALERT_BOX.innerText = `Ошибка ${XHR.status}: ${JSON.parse(XHR.responseText).detail}`
         }
     };
@@ -74,7 +74,7 @@ function upload_files(files_list) {
             ALERT_BOX.classList.add("alert-success")
             ALERT_BOX.innerText = XHR.responseText
         } else if (XHR.status >= 400) {
-            ALERT_BOX.classList.add("alert-warning")
+            ALERT_BOX.classList.add("alert-danger")
             ALERT_BOX.innerText = `Ошибка ${XHR.status}: ${JSON.parse(XHR.responseText).detail}`
         }
     };
