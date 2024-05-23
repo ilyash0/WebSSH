@@ -1,10 +1,13 @@
-from fastapi import APIRouter, Request
-from fastapi.templating import Jinja2Templates
+from fastapi import APIRouter
+from fastapi.responses import HTMLResponse
 
-templates = Jinja2Templates(directory="templates/")
+from . import env
+
 router = APIRouter()
 
 
 @router.get("/")
-def index(result: str = "", request: Request = Request):
-    return templates.TemplateResponse("index.html", {"request": request, "result": result})
+def index(result: str = ""):
+    template = env.get_template("index.html")
+    page = template.render(result=result)
+    return HTMLResponse(page)

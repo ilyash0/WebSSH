@@ -1,14 +1,14 @@
 from fastapi import APIRouter, Request, UploadFile, File, Response, HTTPException
+from fastapi.responses import HTMLResponse
 from typing import List
 from shutil import copyfileobj
 from os import remove
 from starlette.responses import RedirectResponse
 from traceback import print_exception
 
+from . import env
 from ..dependencies import connections
-from fastapi.templating import Jinja2Templates
 
-templates = Jinja2Templates(directory="templates/")
 router = APIRouter()
 
 
@@ -17,8 +17,7 @@ def panel(request: Request = Request):
     if connections.get(request.headers.get("user-agent")) is None:
         return RedirectResponse("/?result=Нет+активного+соединения")
 
-    return templates.TemplateResponse("panel.html", {"request": request, "hostname": request.session["hostname"],
-                                                     "username": request.session["username"]})
+    return HTMLResponse(env.get_template("panel.html").render())
 
 
 @router.post("/reboot/")

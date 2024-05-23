@@ -5,9 +5,7 @@ from traceback import print_exception
 from starlette.responses import RedirectResponse
 
 from ..dependencies import connections
-from fastapi.templating import Jinja2Templates
 
-templates = Jinja2Templates(directory="templates/")
 router = APIRouter()
 
 
