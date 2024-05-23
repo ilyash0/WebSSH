@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Request, UploadFile, File
+from fastapi import APIRouter, Request, UploadFile, File, Response, HTTPException
 from typing import List
 from shutil import copyfileobj
 from os import remove
@@ -26,32 +26,21 @@ def reboot_remote(request: Request = Request):
     try:
         ssh = connections[request.headers.get("user-agent")]
         ssh.exec_command(f"echo \"{request.session['password']}\" | sudo -S reboot")
-        ssh.exec_command("sudo reboot")
-        return templates.TemplateResponse("panel.html",
-                                          {"request": request, "success": "Машина перезагружена. Соединения прервано",
-                                           "hostname": request.session["hostname"],
-                                           "username": request.session["username"]})
+        return Response(status_code=200)
     except Exception as e:
         print_exception(type(e), e, e.__traceback__)
-        return templates.TemplateResponse("panel.html", {"request": request, "danger": f"Ошибка: {e}",
-                                                         "hostname": request.session["hostname"],
-                                                         "username": request.session["username"]})
+        return HTTPException(status_code=400, detail=e.__str__())
 
 
 @router.post("/upload/")
 async def upload_file(files_list: List[UploadFile] = File(...), request: Request = Request):
     if not files_list:
-        raise templates.TemplateResponse("panel.html", {"request": request, "danger": "Ошибка: отсутствует файл",
-                                                        "hostname": request.session["hostname"],
-                                                        "username": request.session["username"]})
+        raise HTTPException(status_code=400, detail="Отсутствует файл")
 
     try:
         ssh = connections[request.headers.get("user-agent")]
         if not ssh:
-            raise templates.TemplateResponse("panel.html", {"request": request,
-                                                            "danger": "Ошибка: Не удалось подключиться к компьютеру",
-                                                            "hostname": request.session["hostname"],
-                                                            "username": request.session["username"]})
+            raise HTTPException(status_code=400, detail="Не удалось подключиться к компьютеру")
 
         sftp_client = ssh.open_sftp()
         for file in files_list:
@@ -62,12 +51,7 @@ async def upload_file(files_list: List[UploadFile] = File(...), request: Request
             remove(file.filename)
 
         sftp_client.close()
-        return templates.TemplateResponse("panel.html",
-                                          {"request": request, "success": f"{len(files_list)} файла успешно переданы",
-                                           "hostname": request.session["hostname"],
-                                           "username": request.session["username"]})
+        return Response(status_code=200, content=f"{len(files_list)} файла успешно переданы")
     except Exception as e:
         print_exception(type(e), e, e.__traceback__)
-        return templates.TemplateResponse("panel.html", {"request": request, "danger": f"Ошибка: {e}",
-                                                         "hostname": request.session["hostname"],
-                                                         "username": request.session["username"]})
+        return HTTPException(status_code=400, detail=e.__str__())

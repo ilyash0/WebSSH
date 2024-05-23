@@ -1,6 +1,7 @@
-from fastapi import APIRouter, Form, Request, HTTPException
+from fastapi import APIRouter, Form, Request, HTTPException, Response
 from paramiko import SSHClient, AutoAddPolicy
 from traceback import print_exception
+
 from starlette.responses import RedirectResponse
 
 from ..dependencies import connections
@@ -29,7 +30,7 @@ def connect_to_remote(host: str = Form(...), username: str = Form(...), password
         ssh.set_missing_host_key_policy(AutoAddPolicy())
         ssh.connect(hostname, username=username, password=password, port=int(port))
         connections[request.headers.get("user-agent")] = ssh
-        return "Successfully connected to remote host"
+        return Response(status_code=200)
     except Exception as e:
         print_exception(type(e), e, e.__traceback__)
         raise HTTPException(status_code=400, detail=e.__str__())
@@ -45,6 +46,4 @@ def disconnect(request: Request = Request):
         return RedirectResponse(url="/")
     except Exception as e:
         print_exception(type(e), e, e.__traceback__)
-        return templates.TemplateResponse("panel.html", {"request": request, "danger": f"Ошибка: {e}",
-                                                         "hostname": request.session["hostname"],
-                                                         "username": request.session["username"]})
+        return HTTPException(status_code=400, detail=e.__str__())
