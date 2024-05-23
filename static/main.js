@@ -83,6 +83,8 @@ function upload_files(files_list) {
         formData.append('files_list', files_list[i]);
     }
     XHR.send(formData);
+    const FILES_LIST = document.getElementById("files_list");
+    FILES_LIST.value = null;
 }
 
 
