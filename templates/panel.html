@@ -14,19 +14,19 @@
 <div class="card centered bg-dark text-white border-dark" style="width: 35%">
     <div class="card-body">
         <h2>Панель управления</h2>
-        <form enctype="multipart/form-data">
+        <form name="upload_form" onsubmit="upload_files(files_list.files); return false">
             <div class="mb-3">
-                <label for="formFileMultiple" class="form-label">Передать файлы на машину</label>
-                <input class="form-control" type="file" id="formFileMultiple" multiple required>
-                <br>
-                <button class="btn btn-primary">Передать файлы</button>
+                <label for="files_list" class="form-label">Передать файлы на машину</label>
+                <input class="form-control" type="file" id="files_list" multiple required>
             </div>
-            <br>
-            <div class="mb-3">
-                <button type="button" class="btn btn-primary" onclick="send_reboot()">Перезагрузить машину</button>
-                <button type="button" class="btn btn-primary" onclick="disconnect()">Оборвать соединение</button>
-            </div>
+            <button type="submit" class="btn btn-primary">Передать файлы</button>
         </form>
+
+        <br>
+        <div class="mb-3">
+            <button type="button" class="btn btn-primary" onclick="send_reboot()">Перезагрузить машину</button>
+            <button type="button" class="btn btn-primary" onclick="disconnect()">Оборвать соединение</button>
+        </div>
     </div>
 </div>
 </body>

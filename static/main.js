@@ -65,4 +65,24 @@ function disconnect() {
     XHR.send();
 }
 
+function upload_files(files_list) {
+    const XHR = new XMLHttpRequest();
+    XHR.open("POST", "/upload");
+    XHR.onreadystatechange = function () {
+        const ALERT_BOX = document.getElementById("alert-box")
+        if (XHR.readyState === XMLHttpRequest.DONE && XHR.status === 200) {
+            ALERT_BOX.classList.add("alert-success")
+            ALERT_BOX.innerText = XHR.responseText
+        } else if (XHR.status >= 400) {
+            ALERT_BOX.classList.add("alert-warning")
+            ALERT_BOX.innerText = `Ошибка ${XHR.status}: ${JSON.parse(XHR.responseText).detail}`
+        }
+    };
+    let formData = new FormData();
+    for (let i = 0; i < files_list.length; i++) {
+        formData.append('files_list', files_list[i]);
+    }
+    XHR.send(formData);
+}
+
 
