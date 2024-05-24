@@ -87,4 +87,18 @@ function upload_files(files_list) {
     FILES_LIST.value = null;
 }
 
+function status() {
+    const XHR = new XMLHttpRequest();
+    XHR.open("GET", "/status");
+    XHR.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+    XHR.onreadystatechange = function () {
+        const ALERT_BOX = document.getElementById("alert-box")
+        const CONNECTION_STATUS = document.getElementById("connection-status")
+        if (XHR.readyState === XMLHttpRequest.DONE && XHR.status === 200) {
+            CONNECTION_STATUS.innerText = "Соединение потеряно";
+            CONNECTION_STATUS.style.color = "red";
+        }
+    };
+    XHR.send();
+}
 

@@ -1,3 +1,7 @@
+from asyncio import sleep
+from datetime import datetime, timedelta
+from urllib import request
+
 from fastapi import APIRouter, Form, Request, HTTPException, Response
 from paramiko import SSHClient, AutoAddPolicy
 from traceback import print_exception
@@ -45,3 +49,26 @@ def disconnect(request: Request = Request):
     except Exception as e:
         print_exception(type(e), e, e.__traceback__)
         return HTTPException(status_code=400, detail=e.__str__())
+
+
+@router.get("/status/")
+async def status(request: Request = Request):
+    user_agent = request.headers.get("user-agent")
+    timeout = 60 * 60  # 1 hour
+    end_time = datetime.now() + timedelta(seconds=timeout)
+
+    while datetime.now() < end_time:
+        if not connections[user_agent].get_transport().active:
+            connections.pop(user_agent)
+            request.session.pop("password")
+            request.session.pop("username")
+            request.session.pop("hostname")
+            return {"status": "disconnected"}
+        await sleep(5)
+
+    # If we reach here, it means the connection has timed out
+    connections.pop(user_agent).close()
+    request.session.pop("password")
+    request.session.pop("username")
+    request.session.pop("hostname")
+    return {"status": "disconnected"}
