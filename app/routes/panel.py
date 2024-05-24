@@ -15,7 +15,7 @@ router = APIRouter()
 @router.get("/panel/")
 def panel(request: Request = Request):
     if connections.get(request.headers.get("user-agent")) is None:
-        return RedirectResponse("/?result=Нет+активного+соединения")
+        return RedirectResponse("/?alert=Нет+активного+соединения")
 
     return HTMLResponse(env.get_template("panel.html").render())
 

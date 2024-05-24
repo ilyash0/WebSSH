@@ -7,7 +7,7 @@ router = APIRouter()
 
 
 @router.get("/")
-def index(result: str = ""):
+def index(alert: str = ""):
     template = env.get_template("index.html")
-    page = template.render(result=result)
+    page = template.render(alert=alert)
     return HTMLResponse(page)

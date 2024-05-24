@@ -10,7 +10,7 @@
 </head>
 <body class="body">
 <h1 class="centered">WebSSH</h1>
-<div id="alert-box" class="alert centered" style="width: 35%"></div>
+<div id="alert-box" class="alert centered" style="width: 35%">{{alert}}</div>
 <div class="card centered bg-dark text-white border-dark" style="width: 35%">
     <div class="card-body">
         <h2 class="centered">Подключиться к машине</h2>
@@ -33,5 +33,12 @@
 
     </div>
 </div>
+
+<script>
+    if (document.getElementById("alert-box").innerText !== "")
+    {
+        document.getElementById("alert-box").classList.add("alert-warning")
+    }
+</script>
 </body>
 </html>
