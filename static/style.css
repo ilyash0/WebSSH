@@ -107,3 +107,40 @@ ul {
     margin: 0;
     padding: 0;
 }
+
+.connection-status {
+    display: flex;
+    align-items: center;
+    margin-top: 10px;
+}
+
+.status-icon {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    margin-right: 10px;
+}
+
+.status-connected {
+    background-color: greenyellow;
+}
+
+.status-disconnected {
+    background-color: red;
+}
+
+.pulse {
+    animation: pulse 5s infinite;
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.3);
+    }
+    100% {
+        transform: scale(1);
+    }
+}

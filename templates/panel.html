@@ -14,11 +14,14 @@
 <div class="card centered bg-dark text-white border-dark" style="width: 35%">
     <div class="card-body">
         <h2>Панель управления</h2>
-        <p class="p-1" id="connection-status" style="color: greenyellow">Соединение активно</p>
+        <div class="connection-status">
+            <div id="status-icon" class="status-icon status-connected pulse"></div>
+            <span id="status-text">Соединение активно</span>
+        </div>
         <form name="upload_form" onsubmit="upload_files(files_list.files); return false">
             <div class="mb-3">
                 <label for="files_list" class="form-label">Передать файлы на машину</label>
-                <input class="form-control" type="file" id="files_list" multiple required>
+                <input class="form-control form-control-lg" type="file" id="files_list" multiple required>
             </div>
             <button type="submit" class="btn btn-primary">Передать файлы</button>
         </form>
@@ -31,5 +34,25 @@
     </div>
 </div>
 </body>
-<script>window.onload = status</script>
+<script>
+let interval = setInterval(() => status(), 5000);
+
+function status() {
+    const XHR = new XMLHttpRequest();
+    XHR.open("GET", "/status");
+    XHR.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+    XHR.onreadystatechange = function () {
+
+        const CONNECTION_ICON = document.getElementById("status-icon")
+        const STATUS_TEXT = document.getElementById("status-text")
+        if (XHR.readyState === XMLHttpRequest.DONE && XHR.status === 200 && XHR.responseText === "disconnected"
+            || XHR.status >= 400) {
+            STATUS_TEXT.innerText = "Соединение потеряно";
+            CONNECTION_ICON.classList.remove('status-connected', 'pulse');
+            CONNECTION_ICON.classList.add('status-disconnected');
+            clearInterval(interval);
+        }
+    };
+    XHR.send();
+}</script>
 </html>

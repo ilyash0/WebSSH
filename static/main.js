@@ -6,7 +6,6 @@ function connect(host, username, password) {
     XHR.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
 
     XHR.onreadystatechange = function () {
-        console.log(XHR.status)
         if (XHR.readyState === XMLHttpRequest.DONE && XHR.status === 200) {
             document.location.href = "/panel"
         } else if (XHR.status >= 400) {
@@ -86,19 +85,3 @@ function upload_files(files_list) {
     const FILES_LIST = document.getElementById("files_list");
     FILES_LIST.value = null;
 }
-
-function status() {
-    const XHR = new XMLHttpRequest();
-    XHR.open("GET", "/status");
-    XHR.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-    XHR.onreadystatechange = function () {
-        const ALERT_BOX = document.getElementById("alert-box")
-        const CONNECTION_STATUS = document.getElementById("connection-status")
-        if (XHR.readyState === XMLHttpRequest.DONE && XHR.status === 200) {
-            CONNECTION_STATUS.innerText = "Соединение потеряно";
-            CONNECTION_STATUS.style.color = "red";
-        }
-    };
-    XHR.send();
-}
-

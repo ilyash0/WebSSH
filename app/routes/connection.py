@@ -41,10 +41,15 @@ def connect_to_remote(host: str = Form(...), username: str = Form(...), password
 @router.get("/disconnect/")
 def disconnect(request: Request = Request):
     try:
+        if not connections.get(request.headers.get("user-agent")):
+            return RedirectResponse(url="/")
+
         ssh = connections[request.headers.get("user-agent")]
         ssh.close()
         connections.pop(request.headers.get("user-agent"))
         request.session.pop("password")
+        request.session.pop("username")
+        request.session.pop("hostname")
         return RedirectResponse(url="/")
     except Exception as e:
         print_exception(type(e), e, e.__traceback__)
@@ -52,23 +57,17 @@ def disconnect(request: Request = Request):
 
 
 @router.get("/status/")
-async def status(request: Request = Request):
+def status(request: Request = Request):
     user_agent = request.headers.get("user-agent")
-    timeout = 60 * 60  # 1 hour
-    end_time = datetime.now() + timedelta(seconds=timeout)
-
-    while datetime.now() < end_time:
-        if not connections[user_agent].get_transport().active:
-            connections.pop(user_agent)
-            request.session.pop("password")
-            request.session.pop("username")
-            request.session.pop("hostname")
-            return {"status": "disconnected"}
-        await sleep(5)
-
-    # If we reach here, it means the connection has timed out
-    connections.pop(user_agent).close()
-    request.session.pop("password")
-    request.session.pop("username")
-    request.session.pop("hostname")
-    return {"status": "disconnected"}
+    if not connections.get(user_agent):
+        request.session.pop("password")
+        request.session.pop("username")
+        request.session.pop("hostname")
+        return Response(status_code=200, content="disconnected")
+    elif not connections[user_agent].get_transport().active:
+        connections.pop(user_agent)
+        request.session.pop("password")
+        request.session.pop("username")
+        request.session.pop("hostname")
+        return Response(status_code=200, content="disconnected")
+    return Response(status_code=200, content="connected")
