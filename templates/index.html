@@ -10,7 +10,7 @@
 </head>
 <body class="body">
 <h1 class="centered">Конфигуратор БВР</h1>
-<div id="alert-box" class="alert centered" style="width: 35%">{{alert}}</div>
+<div id="alert-box" class="alert centered alert-{{alert_type}}" style="width: 35%">{{alert}}</div>
 <div class="card centered bg-dark text-white border-dark" style="width: 35%">
     <div class="card-body">
         <h2>Подключиться к БВР</h2>
@@ -35,9 +35,12 @@
 </div>
 
 <script>
-    if (document.getElementById("alert-box").innerText !== "")
-    {
-        document.getElementById("alert-box").classList.add("alert-warning")
+    const ALERT_BOX = document.getElementById("alert-box")
+    if (ALERT_BOX.innerText === "") {
+        ALERT_BOX.classList.add("hidden")
+    } else if (ALERT_BOX.innerText === "У вас уже есть текущее соединение") {
+        ALERT_BOX.innerHTML += "<br><br><button class='btn btn-primary' onclick='document.location=\"/panel\"'>Перейти к панели</button> " +
+            "<button class='btn btn-secondary' onclick='document.location=\"/disconnect\"'>Оборвать соединение</button>"
     }
 </script>
 </body>
