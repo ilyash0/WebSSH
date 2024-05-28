@@ -1,7 +1,3 @@
-from asyncio import sleep
-from datetime import datetime, timedelta
-from urllib import request
-
 from fastapi import APIRouter, Form, Request, HTTPException, Response
 from paramiko import SSHClient, AutoAddPolicy
 from traceback import print_exception
@@ -39,18 +35,19 @@ def connect_to_remote(host: str = Form(...), username: str = Form(...), password
 
 
 @router.get("/disconnect/")
-def disconnect(request: Request = Request):
+def disconnect(alert: str = "", request: Request = Request):
+    user_agent = request.headers.get("user-agent")
     try:
-        if not connections.get(request.headers.get("user-agent")):
-            return RedirectResponse(url="/")
+        if not connections.get(user_agent):
+            return RedirectResponse(url=f"/?alert={alert}")
 
-        ssh = connections[request.headers.get("user-agent")]
+        ssh = connections[user_agent]
         ssh.close()
-        connections.pop(request.headers.get("user-agent"))
+        connections.pop(user_agent)
         request.session.pop("password")
         request.session.pop("username")
         request.session.pop("hostname")
-        return RedirectResponse(url="/")
+        return RedirectResponse(url=f"/?alert={alert}")
     except Exception as e:
         print_exception(type(e), e, e.__traceback__)
         return HTTPException(status_code=400, detail=e.__str__())
