@@ -18,8 +18,15 @@
             <div id="status-icon" class="status-icon status-connected pulse"></div>
             <span id="status-text">Соединение активно</span>
         </div>
+        <div class="mb-3">
+            <p>
+                Андрес: {{hostname}}<br>
+                Пользователь: {{username}}
+            </p>
+        </div>
+
         <form name="upload_form" onsubmit="upload_files(files_list.files); return false">
-            <div class="mb-3">
+            <div style="margin-bottom: 8px">
                 <label for="files_list" class="form-label">Передать файлы на машину</label>
                 <input class="form-control form-control-lg" type="file" id="files_list" multiple required>
             </div>
@@ -35,24 +42,24 @@
 </div>
 </body>
 <script>
-let interval = setInterval(() => status(), 5000);
+    let interval = setInterval(() => status(), 5000);
 
-function status() {
-    const XHR = new XMLHttpRequest();
-    XHR.open("GET", "/status");
-    XHR.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-    XHR.onreadystatechange = function () {
+    function status() {
+        const XHR = new XMLHttpRequest();
+        XHR.open("GET", "/status");
+        XHR.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+        XHR.onreadystatechange = function () {
 
-        const CONNECTION_ICON = document.getElementById("status-icon")
-        const STATUS_TEXT = document.getElementById("status-text")
-        if (XHR.readyState === XMLHttpRequest.DONE && XHR.status === 200 && XHR.responseText === "disconnected"
-            || XHR.status >= 400) {
-            STATUS_TEXT.innerText = "Соединение потеряно";
-            CONNECTION_ICON.classList.remove('status-connected', 'pulse');
-            CONNECTION_ICON.classList.add('status-disconnected');
-            clearInterval(interval);
-        }
-    };
-    XHR.send();
-}</script>
+            const CONNECTION_ICON = document.getElementById("status-icon")
+            const STATUS_TEXT = document.getElementById("status-text")
+            if (XHR.readyState === XMLHttpRequest.DONE && XHR.status === 200 && XHR.responseText === "disconnected"
+                || XHR.status >= 400) {
+                STATUS_TEXT.innerText = "Соединение потеряно";
+                CONNECTION_ICON.classList.remove('status-connected', 'pulse');
+                CONNECTION_ICON.classList.add('status-disconnected');
+                clearInterval(interval);
+            }
+        };
+        XHR.send();
+    }</script>
 </html>

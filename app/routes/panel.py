@@ -18,7 +18,9 @@ def panel(request: Request = Request):
     if connections.get(user_agent) is None or not connections[user_agent].get_transport().active:
         return RedirectResponse("/disconnect/?alert=Нет+активного+соединения")
 
-    return HTMLResponse(env.get_template("panel.html").render())
+    template = env.get_template("panel.html")
+    page = template.render(hostname=request.session["hostname"], username=request.session["username"])
+    return HTMLResponse(page)
 
 
 @router.post("/reboot/")
