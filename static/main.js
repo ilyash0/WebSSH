@@ -6,11 +6,13 @@ function connect(host, username, password) {
     XHR.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
 
     XHR.onreadystatechange = function () {
+        const ALERT_BOX = document.getElementById("alert-box")
         if (XHR.readyState === XMLHttpRequest.DONE && XHR.status === 200) {
             document.location.href = "/panel"
         } else if (XHR.status >= 400) {
-            document.getElementById("alert-box").classList.add("alert-danger")
-            document.getElementById("alert-box").innerText = `Ошибка ${XHR.status}: ${JSON.parse(XHR.responseText).detail}`
+            ALERT_BOX.classList.remove("hidden");
+            ALERT_BOX.classList.add("alert-danger");
+            ALERT_BOX.innerText = `Ошибка ${XHR.status}: ${JSON.parse(XHR.responseText).detail}`;
         }
         hide_loading_indicator();
     };
@@ -38,11 +40,13 @@ function send_reboot() {
     XHR.onreadystatechange = function () {
         const ALERT_BOX = document.getElementById("alert-box")
         if (XHR.readyState === XMLHttpRequest.DONE && XHR.status === 200) {
-            ALERT_BOX.classList.add("alert-success")
-            ALERT_BOX.innerText = `Машина успешно перезагружена. Соединение оборвано`
+            ALERT_BOX.classList.remove("hidden");
+            ALERT_BOX.classList.add("alert-success");
+            ALERT_BOX.innerText = `Машина успешно перезагружена. Соединение оборвано`;
         } else if (XHR.status >= 400) {
-            ALERT_BOX.classList.add("alert-danger")
-            ALERT_BOX.innerText = `Ошибка ${XHR.status}: ${JSON.parse(XHR.responseText).detail}`
+            ALERT_BOX.classList.remove("hidden");
+            ALERT_BOX.classList.add("alert-danger");
+            ALERT_BOX.innerText = `Ошибка ${XHR.status}: ${JSON.parse(XHR.responseText).detail}`;
         }
     };
     XHR.send();
@@ -57,8 +61,9 @@ function disconnect() {
         if (XHR.readyState === XMLHttpRequest.DONE && XHR.status === 200) {
             document.location.href = "/"
         } else if (XHR.status >= 400) {
-            ALERT_BOX.classList.add("alert-danger")
-            ALERT_BOX.innerText = `Ошибка ${XHR.status}: ${JSON.parse(XHR.responseText).detail}`
+            ALERT_BOX.classList.remove("hidden");
+            ALERT_BOX.classList.add("alert-danger");
+            ALERT_BOX.innerText = `Ошибка ${XHR.status}: ${JSON.parse(XHR.responseText).detail}`;
         }
     };
     XHR.send();
@@ -70,11 +75,13 @@ function upload_files(files_list) {
     XHR.onreadystatechange = function () {
         const ALERT_BOX = document.getElementById("alert-box")
         if (XHR.readyState === XMLHttpRequest.DONE && XHR.status === 200) {
+            ALERT_BOX.classList.remove("hidden");
             ALERT_BOX.classList.add("alert-success")
             ALERT_BOX.innerText = XHR.responseText
         } else if (XHR.status >= 400) {
-            ALERT_BOX.classList.add("alert-danger")
-            ALERT_BOX.innerText = `Ошибка ${XHR.status}: ${JSON.parse(XHR.responseText).detail}`
+            ALERT_BOX.classList.remove("hidden");
+            ALERT_BOX.classList.add("alert-danger");
+            ALERT_BOX.innerText = `Ошибка ${XHR.status} ${JSON.parse(XHR.responseText).detail}`;
         }
     };
     let formData = new FormData();
