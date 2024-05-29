@@ -7,7 +7,7 @@ function connect(host, username, password) {
 
     XHR.onreadystatechange = function () {
         const ALERT_BOX = document.getElementById("alert-box")
-        if (XHR.readyState === XMLHttpRequest.DONE && XHR.status === 200) {
+        if (XHR.readyState === XMLHttpRequest.DONE && XHR.status === 204) {
             document.location.href = "/panel"
         } else if (XHR.status >= 400) {
             ALERT_BOX.classList.remove("hidden");
@@ -39,7 +39,7 @@ function send_reboot() {
     XHR.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
     XHR.onreadystatechange = function () {
         const ALERT_BOX = document.getElementById("alert-box")
-        if (XHR.readyState === XMLHttpRequest.DONE && XHR.status === 200) {
+        if (XHR.readyState === XMLHttpRequest.DONE && XHR.status === 204) {
             ALERT_BOX.classList.remove("hidden");
             ALERT_BOX.classList.add("alert-success");
             ALERT_BOX.innerText = `Машина успешно перезагружена. Соединение оборвано`;

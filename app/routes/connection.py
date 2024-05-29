@@ -1,7 +1,9 @@
+from _socket import gaierror
 from fastapi import APIRouter, Form, Request, HTTPException, Response
 from paramiko import SSHClient, AutoAddPolicy
 from traceback import print_exception
 
+from paramiko.ssh_exception import AuthenticationException
 from starlette.responses import RedirectResponse
 
 from ..dependencies import connections
@@ -28,10 +30,16 @@ def connect_to_remote(host: str = Form(...), username: str = Form(...), password
         ssh.set_missing_host_key_policy(AutoAddPolicy())
         ssh.connect(hostname, username=username, password=password, port=int(port))
         connections[request.headers.get("user-agent")] = ssh
-        return Response(status_code=200)
+        return Response(status_code=204)
+    except gaierror as e:
+        print_exception(type(e), e, e.__traceback__)
+        raise HTTPException(status_code=400, detail="Неверный адрес")
+    except AuthenticationException as e:
+        print_exception(type(e), e, e.__traceback__)
+        raise HTTPException(status_code=400, detail="Неверный логин или пароль")
     except Exception as e:
         print_exception(type(e), e, e.__traceback__)
-        raise HTTPException(status_code=400, detail=e.__str__())
+        raise HTTPException(detail=e.__str__())
 
 
 @router.get("/disconnect/")
@@ -39,7 +47,9 @@ def disconnect(alert: str = "", request: Request = Request):
     user_agent = request.headers.get("user-agent")
     try:
         if not connections.get(user_agent):
-            return RedirectResponse(url=f"/?alert={alert}")
+            if alert:
+                return RedirectResponse(url=f"/?alert={alert}")
+            return RedirectResponse(url=f"/")
 
         ssh = connections[user_agent]
         ssh.close()
@@ -47,10 +57,12 @@ def disconnect(alert: str = "", request: Request = Request):
         request.session.pop("password")
         request.session.pop("username")
         request.session.pop("hostname")
-        return RedirectResponse(url=f"/?alert={alert}")
+        if alert:
+            return RedirectResponse(url=f"/?alert={alert}")
+        return RedirectResponse(url=f"/")
     except Exception as e:
         print_exception(type(e), e, e.__traceback__)
-        return HTTPException(status_code=400, detail=e.__str__())
+        return HTTPException(detail=e.__str__())
 
 
 @router.get("/status/")
