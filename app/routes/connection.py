@@ -14,6 +14,10 @@ router = APIRouter()
 @router.post("/connect/")
 def connect_to_remote(host: str = Form(...), username: str = Form(...), password: str = Form(...),
                       request: Request = Request):
+    user_agent = request.headers.get("user-agent")
+    if is_connected(user_agent):
+        disconnect_ssh(user_agent, request)
+
     try:
         if ":" in host:
             hostname, port = host.split(":")
@@ -29,7 +33,7 @@ def connect_to_remote(host: str = Form(...), username: str = Form(...), password
         ssh = SSHClient()
         ssh.set_missing_host_key_policy(AutoAddPolicy())
         ssh.connect(hostname, username=username, password=password, port=int(port))
-        connections[request.headers.get("user-agent")] = ssh
+        connections[user_agent] = ssh
         return Response(status_code=204)
     except gaierror as e:
         print_exception(type(e), e, e.__traceback__)
