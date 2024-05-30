@@ -7,7 +7,7 @@ from starlette.responses import RedirectResponse
 from traceback import print_exception
 
 from . import env
-from ..dependencies import connections
+from ..dependencies import connections, is_connected
 
 router = APIRouter()
 
@@ -15,7 +15,7 @@ router = APIRouter()
 @router.get("/panel/")
 def panel(request: Request = Request):
     user_agent = request.headers.get("user-agent")
-    if connections.get(user_agent) is None or not connections[user_agent].get_transport().active:
+    if not is_connected(user_agent):
         return RedirectResponse("/disconnect/?alert=Нет+активного+соединения")
 
     template = env.get_template("panel.html")

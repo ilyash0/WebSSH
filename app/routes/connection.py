@@ -6,7 +6,7 @@ from traceback import print_exception
 from paramiko.ssh_exception import AuthenticationException
 from starlette.responses import RedirectResponse
 
-from ..dependencies import connections
+from ..dependencies import connections, is_connected, disconnect_ssh
 
 router = APIRouter()
 
@@ -46,17 +46,9 @@ def connect_to_remote(host: str = Form(...), username: str = Form(...), password
 def disconnect(alert: str = "", request: Request = Request):
     user_agent = request.headers.get("user-agent")
     try:
-        if not connections.get(user_agent):
-            if alert:
-                return RedirectResponse(url=f"/?alert={alert}")
-            return RedirectResponse(url=f"/")
+        if is_connected(user_agent):
+            disconnect_ssh(user_agent, request)
 
-        ssh = connections[user_agent]
-        ssh.close()
-        connections.pop(user_agent)
-        request.session.pop("password")
-        request.session.pop("username")
-        request.session.pop("hostname")
         if alert:
             return RedirectResponse(url=f"/?alert={alert}")
         return RedirectResponse(url=f"/")
