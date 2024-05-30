@@ -31,7 +31,7 @@ def reboot_remote(request: Request = Request):
         return Response(status_code=204)
     except Exception as e:
         print_exception(type(e), e, e.__traceback__)
-        return HTTPException(detail=e.__str__())
+        return HTTPException(status_code=500, detail=e.__str__())
 
 
 @router.post("/upload/")
@@ -56,4 +56,4 @@ async def upload_file(files_list: List[UploadFile] = File(...), request: Request
         return Response(status_code=200, content=f"{len(files_list)} файла успешно переданы")
     except Exception as e:
         print_exception(type(e), e, e.__traceback__)
-        return HTTPException(detail=e.__str__())
+        return HTTPException(status_code=500, detail=e.__str__())

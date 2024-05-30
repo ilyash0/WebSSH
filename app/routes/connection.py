@@ -39,7 +39,7 @@ def connect_to_remote(host: str = Form(...), username: str = Form(...), password
         raise HTTPException(status_code=400, detail="Неверный логин или пароль")
     except Exception as e:
         print_exception(type(e), e, e.__traceback__)
-        raise HTTPException(detail=e.__str__())
+        raise HTTPException(status_code=500, detail=e.__str__())
 
 
 @router.get("/disconnect/")
@@ -62,7 +62,7 @@ def disconnect(alert: str = "", request: Request = Request):
         return RedirectResponse(url=f"/")
     except Exception as e:
         print_exception(type(e), e, e.__traceback__)
-        return HTTPException(detail=e.__str__())
+        return HTTPException(status_code=500, detail=e.__str__())
 
 
 @router.get("/status/")
