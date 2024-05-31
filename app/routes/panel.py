@@ -7,7 +7,7 @@ from starlette.responses import RedirectResponse
 from traceback import print_exception
 
 from . import env
-from ..dependencies import connections, is_connected
+from ..dependencies import connections, is_connected, upload_dir
 
 router = APIRouter()
 
@@ -49,7 +49,7 @@ async def upload_file(files_list: List[UploadFile] = File(...), request: Request
             # Create a temporary file to save the downloaded file
             with open(file.filename, "wb") as buffer:
                 copyfileobj(file.file, buffer)
-            sftp_client.put(file.filename, f"/home/{request.session['username']}/{file.filename}")
+            sftp_client.put(file.filename, f"{upload_dir}/{file.filename}")
             remove(file.filename)
 
         sftp_client.close()

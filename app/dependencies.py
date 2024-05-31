@@ -2,6 +2,7 @@ from paramiko import SSHClient
 from fastapi import Request
 
 connections: dict[str, SSHClient] = {}
+upload_dir = "/home"
 
 
 def disconnect_ssh(user_agent: str, request: Request):
