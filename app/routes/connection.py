@@ -1,5 +1,5 @@
 from _socket import gaierror
-from fastapi import APIRouter, Form, Request, HTTPException, Response
+from fastapi import APIRouter, Form, Request, Response
 from paramiko import SSHClient, AutoAddPolicy
 from traceback import print_exception
 
@@ -37,13 +37,13 @@ def connect_to_remote(host: str = Form(...), username: str = Form(...), password
         return Response(status_code=204)
     except gaierror as e:
         print_exception(type(e), e, e.__traceback__)
-        raise HTTPException(status_code=400, detail="Неверный адрес")
+        return Response(status_code=400, content="Неверный адрес")
     except AuthenticationException as e:
         print_exception(type(e), e, e.__traceback__)
-        raise HTTPException(status_code=400, detail="Неверный логин или пароль")
+        return Response(status_code=400, content="Неверный логин или пароль")
     except Exception as e:
         print_exception(type(e), e, e.__traceback__)
-        raise HTTPException(status_code=500, detail=e.__str__())
+        return Response(status_code=500, content=e.__str__())
 
 
 @router.get("/disconnect/")
@@ -58,7 +58,7 @@ def disconnect(alert: str = "", request: Request = Request):
         return RedirectResponse(url=f"/")
     except Exception as e:
         print_exception(type(e), e, e.__traceback__)
-        return HTTPException(status_code=500, detail=e.__str__())
+        return Response(status_code=500, content=e.__str__())
 
 
 @router.get("/status/")

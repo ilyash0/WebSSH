@@ -12,7 +12,7 @@ function connect(host, username, password) {
         } else if (XHR.status >= 400) {
             ALERT_BOX.classList.remove("hidden");
             ALERT_BOX.classList.add("alert-danger");
-            ALERT_BOX.innerText = `Ошибка ${XHR.status}: ${JSON.parse(XHR.responseText).detail}`;
+            ALERT_BOX.innerText = `Ошибка ${XHR.status}: ${XHR.responseText}`;
         }
         hide_loading_indicator();
     };
@@ -46,7 +46,7 @@ function send_reboot() {
         } else if (XHR.status >= 400) {
             ALERT_BOX.classList.remove("hidden");
             ALERT_BOX.classList.add("alert-danger");
-            ALERT_BOX.innerText = `Ошибка ${XHR.status}: ${JSON.parse(XHR.responseText).detail}`;
+            ALERT_BOX.innerText = `Ошибка ${XHR.status}: ${XHR.responseText}`;
         }
     };
     XHR.send();
@@ -63,7 +63,7 @@ function disconnect() {
         } else if (XHR.status >= 400) {
             ALERT_BOX.classList.remove("hidden");
             ALERT_BOX.classList.add("alert-danger");
-            ALERT_BOX.innerText = `Ошибка ${XHR.status}: ${JSON.parse(XHR.responseText).detail}`;
+            ALERT_BOX.innerText = `Ошибка ${XHR.status}: ${XHR.responseText}`;
         }
     };
     XHR.send();
@@ -81,7 +81,7 @@ function upload_files(files_list) {
         } else if (XHR.status >= 400) {
             ALERT_BOX.classList.remove("hidden");
             ALERT_BOX.classList.add("alert-danger");
-            ALERT_BOX.innerText = `Ошибка ${XHR.status} ${JSON.parse(XHR.responseText).detail}`;
+            ALERT_BOX.innerText = `Ошибка ${XHR.status} ${XHR.responseText}`;
         }
     };
     let formData = new FormData();
