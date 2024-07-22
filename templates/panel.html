@@ -27,16 +27,16 @@
 
         <form name="upload_form" onsubmit="upload_files(files_list.files); return false">
             <div style="margin-bottom: 8px">
-                <label for="files_list" class="form-label">Передать файлы на устройство</label>
+                <label for="files_list" class="form-label">Заменить RSA файлы на устройстве</label>
                 <input class="form-control form-control-lg" type="file" id="files_list" multiple required>
             </div>
-            <button type="submit" class="btn btn-primary">Передать файлы</button>
+            <button type="submit" class="btn btn-primary">Заменить</button>
         </form>
 
         <br>
         <div class="mb-3">
             <button type="button" class="btn btn-primary" onclick="send_reboot()">Перезагрузить устройство</button>
-            <button type="button" class="btn btn-primary" onclick="disconnect()">Оборвать соединение</button>
+            <button type="button" class="btn btn-primary" onclick="disconnect()">Отключиться</button>
         </div>
     </div>
 </div>
