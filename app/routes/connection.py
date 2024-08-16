@@ -10,14 +10,14 @@ router = APIRouter()
 
 
 @router.post("/connect/")
-def connect_to_remote(password: str = Form(...), request: Request = Request):
+def connect_to_remote(username: str = Form(...), password: str = Form(...), request: Request = Request):
     user_agent = request.headers.get("user-agent")
     if is_connected(user_agent):
         disconnect_session(user_agent, request)
 
     try:
-        if str(password) != str(environ["PASSWORD"]):
-            return Response(status_code=400, content="Неверный пароль")
+        if str(password) != str(environ["PASSWORD"]) or str(username) != str(environ["USERNAME"]):
+            return Response(status_code=400, content="Неверное имя пользователя или пароль")
 
         request.session["password"] = password
         connections.append(user_agent)

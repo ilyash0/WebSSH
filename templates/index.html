@@ -15,15 +15,15 @@
     <div class="card-body">
         <h2>Подключиться к БВР</h2>
         <!--        document.location.href.slice(7, -1)-->
-        <form name="connection_form" onsubmit="connect(password.value); return false">
+        <form name="connection_form" onsubmit="connect(username.value, password.value); return false">
 <!--            <div class="mb-3">-->
 <!--                <label for="host" class="form-label">Адрес и порт</label>-->
 <!--                <input type="text" class="form-control" id="host" required>-->
 <!--            </div>-->
-<!--            <div class="mb-3">-->
-<!--                <label for="username" class="form-label">Имя пользователя</label>-->
-<!--                <input type="text" class="form-control" id="username" required>-->
-<!--            </div>-->
+            <div class="mb-3">
+                <label for="username" class="form-label">Имя пользователя</label>
+                <input type="text" class="form-control" id="username" required>
+            </div>
             <div class="mb-3">
                 <label for="password" class="form-label">Пароль</label>
                 <input type="password" class="form-control" id="password" required>

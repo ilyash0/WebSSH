@@ -1,4 +1,4 @@
-function connect(password) {
+function connect(username, password) {
     show_loading_indicator();
 
     const XHR = new XMLHttpRequest();
@@ -16,7 +16,7 @@ function connect(password) {
         }
         hide_loading_indicator();
     };
-    XHR.send("password=" + password + "");
+    XHR.send("username=" + username + "&password=" + password + "");
 }
 
 function show_loading_indicator() {
