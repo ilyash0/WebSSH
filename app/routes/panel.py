@@ -19,7 +19,7 @@ def panel(request: Request = Request):
         return RedirectResponse("/?alert=Нет+активного+соединения")
 
     template = env.get_template("panel.html")
-    page = template.render(hostname=request.session["hostname"], username=request.session["username"])
+    page = template.render()
     return HTMLResponse(page)
 
 
