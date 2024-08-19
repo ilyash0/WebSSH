@@ -3,12 +3,10 @@ from os import environ
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 from starlette.middleware.sessions import SessionMiddleware
-from dotenv import load_dotenv
 import static
-from app.routes import index, panel, connection
+from app.routes import panel, auth
 
-routers = (index.router, panel.router, connection.router)
-load_dotenv()
+routers = (panel.router, auth.router)
 app = FastAPI()
 app.mount(
     "/static",

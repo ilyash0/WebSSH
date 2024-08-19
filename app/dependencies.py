@@ -1,7 +1,6 @@
 from fastapi import Request
 
 connections: list[str] = []
-upload_dir = "/home/ilya"
 
 
 def disconnect_session(user: str, request: Request):

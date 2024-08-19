@@ -1,8 +1,8 @@
-function connect(username, password) {
+function login(username, password) {
     show_loading_indicator();
 
     const XHR = new XMLHttpRequest();
-    XHR.open("POST", "/connect");
+    XHR.open("POST", "/login/");
     XHR.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
 
     XHR.onreadystatechange = function () {
@@ -35,7 +35,7 @@ function hide_loading_indicator() {
 
 function send_reboot() {
     const XHR = new XMLHttpRequest();
-    XHR.open("POST", "/reboot");
+    XHR.open("POST", "/panel/reboot");
     XHR.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
     XHR.onreadystatechange = function () {
         const ALERT_BOX = document.getElementById("alert-box")
@@ -52,9 +52,9 @@ function send_reboot() {
     XHR.send();
 }
 
-function disconnect() {
+function logout() {
     const XHR = new XMLHttpRequest();
-    XHR.open("GET", "/disconnect");
+    XHR.open("GET", "/logout");
     XHR.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
     XHR.onreadystatechange = function () {
         const ALERT_BOX = document.getElementById("alert-box")
@@ -71,7 +71,7 @@ function disconnect() {
 
 function upload_files(files_list) {
     const XHR = new XMLHttpRequest();
-    XHR.open("POST", "/upload");
+    XHR.open("POST", "/panel/upload");
     XHR.onreadystatechange = function () {
         const ALERT_BOX = document.getElementById("alert-box")
         if (XHR.readyState === XMLHttpRequest.DONE && XHR.status === 200) {
@@ -81,7 +81,7 @@ function upload_files(files_list) {
         } else if (XHR.status >= 400) {
             ALERT_BOX.classList.remove("hidden");
             ALERT_BOX.classList.add("alert-danger");
-            ALERT_BOX.innerText = `Ошибка ${XHR.status} ${XHR.responseText}`;
+            ALERT_BOX.innerText = `Ошибка ${XHR.status}: ${XHR.responseText}`;
         }
     };
     let formData = new FormData();
