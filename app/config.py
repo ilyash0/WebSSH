@@ -1,1 +1,1 @@
-upload_dir = "/home/ilya"
+upload_dir = "/bin"
