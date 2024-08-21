@@ -41,14 +41,12 @@ def login(username: str = Form(...), password: str = Form(...), request: Request
 
 
 @router.get("/logout/")
-def logout(alert: str = "", request: Request = Request):
+def logout(request: Request = Request):
     user_agent = request.headers.get("user-agent")
     try:
         if is_connected(user_agent):
             disconnect_session(user_agent, request)
 
-        if alert:
-            return RedirectResponse(url=f"/?alert={alert}")
         return RedirectResponse(url=f"/")
     except Exception as e:
         print_exception(type(e), e, e.__traceback__)
