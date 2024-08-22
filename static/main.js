@@ -33,25 +33,6 @@ function hide_loading_indicator() {
     }
 }
 
-function send_reboot() {
-    const XHR = new XMLHttpRequest();
-    XHR.open("POST", "/panel/reboot");
-    XHR.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-    XHR.onreadystatechange = function () {
-        const ALERT_BOX = document.getElementById("alert-box")
-        if (XHR.readyState === XMLHttpRequest.DONE && XHR.status === 204) {
-            ALERT_BOX.classList.remove("hidden");
-            ALERT_BOX.classList.add("alert-success");
-            ALERT_BOX.innerText = `Машина успешно перезагружена. Соединение оборвано`;
-        } else if (XHR.status >= 400) {
-            ALERT_BOX.classList.remove("hidden");
-            ALERT_BOX.classList.add("alert-danger");
-            ALERT_BOX.innerText = `Ошибка ${XHR.status}: ${XHR.responseText}`;
-        }
-    };
-    XHR.send();
-}
-
 function logout() {
     const XHR = new XMLHttpRequest();
     XHR.open("GET", "/logout");
@@ -67,28 +48,4 @@ function logout() {
         }
     };
     XHR.send();
-}
-
-function upload_files(files_list) {
-    const XHR = new XMLHttpRequest();
-    XHR.open("POST", "/panel/upload");
-    XHR.onreadystatechange = function () {
-        const ALERT_BOX = document.getElementById("alert-box")
-        if (XHR.readyState === XMLHttpRequest.DONE && XHR.status === 200) {
-            ALERT_BOX.classList.remove("hidden");
-            ALERT_BOX.classList.add("alert-success")
-            ALERT_BOX.innerText = XHR.responseText
-        } else if (XHR.status >= 400) {
-            ALERT_BOX.classList.remove("hidden");
-            ALERT_BOX.classList.add("alert-danger");
-            ALERT_BOX.innerText = `Ошибка ${XHR.status}: ${XHR.responseText}`;
-        }
-    };
-    let formData = new FormData();
-    for (let i = 0; i < files_list.length; i++) {
-        formData.append('files_list', files_list[i]);
-    }
-    XHR.send(formData);
-    const FILES_LIST = document.getElementById("files_list");
-    FILES_LIST.value = null;
 }

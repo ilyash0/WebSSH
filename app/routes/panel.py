@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Request, UploadFile, File, Response
 from typing import List
 from shutil import copyfileobj
-from os import system, path
+from os import system, path, environ
 from starlette.responses import HTMLResponse, RedirectResponse
 from traceback import print_exception
 
@@ -27,9 +27,9 @@ def panel_page(request: Request = Request):
 
 
 @router.post("/reboot/")
-def reboot_remote_device(request: Request = Request):
+def reboot_remote_device():
     try:
-        system(f"echo \"{request.session['password']}\" | sudo -S reboot")
+        system(f"echo \"{environ["PASSWORD"]}\" | sudo -S reboot")
         return Response(status_code=HTTP_204_NO_CONTENT)
     except Exception as e:
         print_exception(type(e), e, e.__traceback__)

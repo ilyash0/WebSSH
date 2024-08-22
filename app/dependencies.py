@@ -1,11 +1,8 @@
-from fastapi import Request
-
 connections: list[str] = []
 
 
-def disconnect_session(user: str, request: Request):
+def disconnect_session(user: str):
     connections.remove(user)
-    request.session.pop("password")
 
 
 def is_connected(user: str):
