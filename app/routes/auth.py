@@ -25,7 +25,6 @@ async def idle_disconnect(user_agent: str):
 
     connection = get_connection_or_none(user_agent)
     if connection["login_time"] + timedelta(seconds=time_to_disconnect) < datetime.now():
-        print(f"Logout user {connection["user_agent"]}")
         disconnect_session(user_agent)
 
 
