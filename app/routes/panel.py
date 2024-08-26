@@ -54,3 +54,11 @@ async def upload_files(files_list: List[UploadFile] = File(...)):
     except Exception as e:
         print_exception(type(e), e, e.__traceback__)
         return Response(status_code=HTTP_500_INTERNAL_SERVER_ERROR, content=e.__str__())
+
+
+@router.get("/status/")
+def check_connection_status(request: Request = Request):
+    user_agent = request.headers.get("user-agent")
+    if is_connected(user_agent):
+        return Response(status_code=HTTP_204_NO_CONTENT)
+    return Response(status_code=HTTP_400_BAD_REQUEST)

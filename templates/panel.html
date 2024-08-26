@@ -91,7 +91,7 @@
 
     function status() {
         const XHR = new XMLHttpRequest();
-        XHR.open("GET", "/status");
+        XHR.open("GET", "/panel/status");
         XHR.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
         XHR.onreadystatechange = function () {
             if (!(XHR.status === 204)) {
