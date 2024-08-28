@@ -37,6 +37,7 @@
 </div>
 </body>
 <script>
+    const ALERT_BOX = document.getElementById("alert-box")
     function show_disconnect() {
         const CONNECTION_ICON = document.getElementById("status-icon")
         const STATUS_TEXT = document.getElementById("status-text")
@@ -50,7 +51,6 @@
         XHR.open("POST", "/panel/reboot");
         XHR.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
         XHR.onreadystatechange = function () {
-            const ALERT_BOX = document.getElementById("alert-box")
             if (XHR.readyState === XMLHttpRequest.DONE && XHR.status === 204) {
                 ALERT_BOX.classList.remove("hidden");
                 ALERT_BOX.classList.add("alert-success");
@@ -69,7 +69,6 @@
         const XHR = new XMLHttpRequest();
         XHR.open("POST", "/panel/upload");
         XHR.onreadystatechange = function () {
-            const ALERT_BOX = document.getElementById("alert-box")
             if (XHR.readyState === XMLHttpRequest.DONE && XHR.status === 200) {
                 ALERT_BOX.classList.remove("hidden");
                 ALERT_BOX.classList.add("alert-success")
@@ -95,6 +94,9 @@
         XHR.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
         XHR.onreadystatechange = function () {
             if (!(XHR.status === 204)) {
+                ALERT_BOX.classList.remove("hidden");
+                ALERT_BOX.classList.add("alert-danger");
+                ALERT_BOX.innerText = `Время подключения истекло`;
                 show_disconnect();
                 clearInterval(interval);
             }

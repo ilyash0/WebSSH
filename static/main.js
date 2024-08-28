@@ -1,11 +1,11 @@
-function login(username, password) {
+async function login(username, password) {
     show_loading_indicator();
 
     const XHR = new XMLHttpRequest();
     XHR.open("POST", "/login/");
     XHR.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
 
-    XHR.onreadystatechange = function () {
+    XHR.onreadystatechange = async function () {
         const ALERT_BOX = document.getElementById("alert-box")
         if (XHR.readyState === XMLHttpRequest.DONE && XHR.status === 204) {
             document.location.href = "/panel"
@@ -16,7 +16,11 @@ function login(username, password) {
         }
         hide_loading_indicator();
     };
-    XHR.send("username=" + username + "&password=" + password + "");
+    let body = new URLSearchParams({
+        'username': username,
+        'password': password
+    })
+    XHR.send(body);
 }
 
 function show_loading_indicator() {

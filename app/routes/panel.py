@@ -1,26 +1,22 @@
-from fastapi import APIRouter, Request, UploadFile, File, Response
+from fastapi import APIRouter, Request, UploadFile, File, Response, Depends
 from typing import List
 from shutil import copyfileobj
 from os import system, path, environ
-from starlette.responses import HTMLResponse, RedirectResponse
+from starlette.responses import HTMLResponse
 from traceback import print_exception
 
 from starlette.status import HTTP_204_NO_CONTENT, HTTP_403_FORBIDDEN, HTTP_400_BAD_REQUEST, HTTP_200_OK, \
     HTTP_500_INTERNAL_SERVER_ERROR
 
 from . import env
-from ..dependencies import is_connected
+from ..dependencies import is_authorized, get_token
 from ..config import upload_dir
 
-router = APIRouter(prefix="/panel", tags=["Home app"])
+router = APIRouter(prefix="/panel", tags=["Home app"], dependencies=[Depends(get_token)])
 
 
 @router.get("/")
-def panel_page(request: Request = Request):
-    user_agent = request.headers.get("user-agent")
-    if not is_connected(user_agent):
-        return RedirectResponse("/?alert=Нет+активного+соединения")
-
+def panel_page():
     template = env.get_template("panel.html")
     page = template.render()
     return HTMLResponse(page)
@@ -58,7 +54,6 @@ async def upload_files(files_list: List[UploadFile] = File(...)):
 
 @router.get("/status/")
 def check_connection_status(request: Request = Request):
-    user_agent = request.headers.get("user-agent")
-    if is_connected(user_agent):
+    if is_authorized(request):
         return Response(status_code=HTTP_204_NO_CONTENT)
     return Response(status_code=HTTP_400_BAD_REQUEST)
