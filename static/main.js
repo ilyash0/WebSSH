@@ -2,7 +2,7 @@ async function login(username, password) {
     show_loading_indicator();
 
     const XHR = new XMLHttpRequest();
-    XHR.open("POST", "/login/");
+    XHR.open("POST", "/login");
     XHR.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
 
     XHR.onreadystatechange = async function () {

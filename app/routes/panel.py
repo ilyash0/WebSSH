@@ -10,19 +10,19 @@ from starlette.status import HTTP_204_NO_CONTENT, HTTP_403_FORBIDDEN, HTTP_400_B
 
 from . import env
 from ..dependencies import is_authorized, get_token
-from ..config import upload_dir
+from ..config import UPLOAD_DIR
 
 router = APIRouter(prefix="/panel", tags=["Home app"], dependencies=[Depends(get_token)])
 
 
-@router.get("/")
+@router.get("")
 def panel_page():
     template = env.get_template("panel.html")
     page = template.render()
     return HTMLResponse(page)
 
 
-@router.post("/reboot/")
+@router.post("/reboot")
 def reboot_remote_device():
     try:
         system(f"echo \"{environ["PASSWORD"]}\" | sudo -S reboot")
@@ -32,14 +32,14 @@ def reboot_remote_device():
         return Response(status_code=HTTP_500_INTERNAL_SERVER_ERROR, content=e.__str__())
 
 
-@router.post("/upload/")
+@router.post("/upload")
 async def upload_files(files_list: List[UploadFile] = File(...)):
     if not files_list:
         return Response(status_code=HTTP_400_BAD_REQUEST, content="Отсутствует файл")
 
     try:
         for file in files_list:
-            file_path = path.join(upload_dir, file.filename)
+            file_path = path.join(UPLOAD_DIR, file.filename)
             with open(file_path, "wb") as buffer:
                 copyfileobj(file.file, buffer)
 
@@ -52,7 +52,7 @@ async def upload_files(files_list: List[UploadFile] = File(...)):
         return Response(status_code=HTTP_500_INTERNAL_SERVER_ERROR, content=e.__str__())
 
 
-@router.get("/status/")
+@router.get("/status")
 def check_connection_status(request: Request = Request):
     if is_authorized(request):
         return Response(status_code=HTTP_204_NO_CONTENT)
