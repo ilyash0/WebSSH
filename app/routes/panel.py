@@ -5,8 +5,7 @@ from os import system, path, environ
 from starlette.responses import HTMLResponse
 from traceback import print_exception
 
-from starlette.status import HTTP_204_NO_CONTENT, HTTP_403_FORBIDDEN, HTTP_400_BAD_REQUEST, HTTP_200_OK, \
-    HTTP_500_INTERNAL_SERVER_ERROR
+from starlette.status import HTTP_204_NO_CONTENT, HTTP_403_FORBIDDEN, HTTP_400_BAD_REQUEST, HTTP_200_OK
 
 from . import env
 from ..dependencies import is_authorized, get_token
@@ -24,12 +23,8 @@ def panel_page():
 
 @router.post("/reboot")
 def reboot_remote_device():
-    try:
-        system(f"echo \"{environ["PASSWORD"]}\" | sudo -S reboot")
-        return Response(status_code=HTTP_204_NO_CONTENT)
-    except Exception as e:
-        print_exception(type(e), e, e.__traceback__)
-        return Response(status_code=HTTP_500_INTERNAL_SERVER_ERROR, content=e.__str__())
+    system(f"echo \"{environ["PASSWORD"]}\" | sudo -S reboot")
+    return Response(status_code=HTTP_204_NO_CONTENT)
 
 
 @router.post("/upload")
@@ -47,9 +42,6 @@ async def upload_files(files_list: List[UploadFile] = File(...)):
     except PermissionError as e:
         print_exception(type(e), e, e.__traceback__)
         return Response(status_code=HTTP_403_FORBIDDEN, content="Не достаточно прав")
-    except Exception as e:
-        print_exception(type(e), e, e.__traceback__)
-        return Response(status_code=HTTP_500_INTERNAL_SERVER_ERROR, content=e.__str__())
 
 
 @router.get("/status")

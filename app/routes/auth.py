@@ -1,12 +1,12 @@
 from datetime import datetime, timedelta, UTC
 from os import environ
 from typing import Annotated
-from traceback import print_exception
+
 
 from fastapi import APIRouter, Request, Response, Depends
 from fastapi.security import OAuth2PasswordRequestForm
 from starlette.responses import RedirectResponse, HTMLResponse
-from starlette.status import HTTP_204_NO_CONTENT, HTTP_400_BAD_REQUEST, HTTP_500_INTERNAL_SERVER_ERROR
+from starlette.status import HTTP_204_NO_CONTENT, HTTP_400_BAD_REQUEST
 from jose import jwt
 
 from . import env
@@ -39,25 +39,17 @@ def login(form_data: Annotated[OAuth2PasswordRequestForm, Depends()], request: R
     password: str = form_data.password
     username: str = form_data.username
 
-    try:
-        if password != environ["PASSWORD"] or username != environ["USERNAME"]:
-            return Response(status_code=HTTP_400_BAD_REQUEST, content="Неверное имя пользователя или пароль")
+    if password != environ["PASSWORD"] or username != environ["USERNAME"]:
+        return Response(status_code=HTTP_400_BAD_REQUEST, content="Неверное имя пользователя или пароль")
 
-        access_token = create_access_token({})
-        request.session["users_access_token"] = access_token
-        return Response(status_code=HTTP_204_NO_CONTENT)
-    except Exception as e:
-        print_exception(type(e), e, e.__traceback__)
-        return Response(status_code=HTTP_500_INTERNAL_SERVER_ERROR, content=e.__str__())
+    access_token = create_access_token({})
+    request.session["users_access_token"] = access_token
+    return Response(status_code=HTTP_204_NO_CONTENT)
 
 
 @router.get("/logout")
 def logout(request: Request = Request):
-    try:
-        if is_authorized(request):
-            request.session.pop("users_access_token")
+    if is_authorized(request):
+        request.session.pop("users_access_token")
 
-        return RedirectResponse(url="/")
-    except Exception as e:
-        print_exception(type(e), e, e.__traceback__)
-        return Response(status_code=HTTP_500_INTERNAL_SERVER_ERROR, content=e.__str__())
+    return RedirectResponse(url="/")
