@@ -30,6 +30,7 @@ def unauthorized_exception_handler(_request: Request, exc: HTTPException) -> Red
 
 
 @app.exception_handler(404)
+@app.exception_handler(405)
 def not_found_exception_handler(_request: Request, _exc: HTTPException) -> HTMLResponse:
     template = env.get_template("404_not_found.html")
     page = template.render()
