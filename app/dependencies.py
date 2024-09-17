@@ -1,8 +1,8 @@
-from datetime import datetime, UTC
+from datetime import UTC, datetime
 from os import environ
 
-from fastapi import Request, HTTPException
-from jose import jwt, JWTError
+from fastapi import HTTPException, Request
+from jose import JWTError, jwt
 from starlette.status import HTTP_401_UNAUTHORIZED
 
 from app.config import JWT_ALGORITHM

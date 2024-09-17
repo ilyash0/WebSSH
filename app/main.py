@@ -2,14 +2,14 @@ from datetime import datetime
 from os import environ
 from traceback import print_exception
 
-from fastapi import FastAPI, Request, HTTPException
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.staticfiles import StaticFiles
 from starlette.middleware.sessions import SessionMiddleware
-from starlette.responses import RedirectResponse, HTMLResponse
+from starlette.responses import HTMLResponse, RedirectResponse
 
 import static
 from app.config import SERVER_EXCEPTIONS_CODES
-from app.routes import panel, auth, env
+from app.routes import auth, env, panel
 
 routers = (panel.router, auth.router)
 app = FastAPI()
@@ -39,10 +39,14 @@ def not_found_exception_handler(_request: Request, _exc: HTTPException) -> HTMLR
 
 def server_exception_handler(_request: Request, exc: ValueError) -> HTMLResponse:
     status_code = exc.status_code if hasattr(exc, "status_code") else 500
-    detail = exc.detail if hasattr(exc, "detail") else exc.args[0] if len(exc.args) >= 1 else "No detail"
+    if hasattr(exc, "detail"):
+        detail = exc.detail
+    else:
+        detail = exc.args[0] if len(exc.args) >= 1 else "No detail"
+
     template = env.get_template("500_internal_server_error.html")
-    page = template.render(timestamp=datetime.now().strftime("%d.%m.%Y %H:%M:%S"), status_code=status_code,
-                           detail=detail)
+    page = template.render(timestamp=datetime.now().strftime("%d.%m.%Y %H:%M:%S"),
+                           status_code=status_code, detail=detail)
     print_exception(type(exc), exc, exc.__traceback__)
     return HTMLResponse(page)
 
