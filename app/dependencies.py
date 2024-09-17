@@ -4,8 +4,12 @@ from os import environ
 from fastapi import HTTPException, Request
 from jose import JWTError, jwt
 from starlette.status import HTTP_401_UNAUTHORIZED
+from slowapi import Limiter
+from slowapi.util import get_remote_address
 
 from app.config import JWT_ALGORITHM
+
+limiter = Limiter(key_func=get_remote_address)
 
 
 def get_token(request: Request = Request) -> str:

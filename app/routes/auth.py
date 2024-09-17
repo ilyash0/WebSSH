@@ -10,8 +10,8 @@ from starlette.status import HTTP_204_NO_CONTENT, HTTP_400_BAD_REQUEST
 from jose import jwt
 
 from . import env
-from ..config import ACCESS_TOKEN_EXPIRE_MINUTES, JWT_ALGORITHM
-from ..dependencies import is_authorized
+from ..config import ACCESS_TOKEN_EXPIRE_MINUTES, JWT_ALGORITHM, RATE_LIMIT
+from ..dependencies import is_authorized, limiter
 
 router = APIRouter(tags=["Authentication"])
 
@@ -35,6 +35,7 @@ def index_page(alert_type: str = "warning", alert: str = "", request: Request = 
 
 
 @router.post("/login")
+@limiter.limit(RATE_LIMIT)
 def login(form_data: Annotated[OAuth2PasswordRequestForm, Depends()], request: Request = Request):
     password: str = form_data.password
     username: str = form_data.username
@@ -44,6 +45,7 @@ def login(form_data: Annotated[OAuth2PasswordRequestForm, Depends()], request: R
 
     access_token = create_access_token({})
     request.session["users_access_token"] = access_token
+    limiter.reset()
     return Response(status_code=HTTP_204_NO_CONTENT)
 
 

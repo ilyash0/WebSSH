@@ -5,11 +5,15 @@ from traceback import print_exception
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.staticfiles import StaticFiles
 from starlette.middleware.sessions import SessionMiddleware
-from starlette.responses import HTMLResponse, RedirectResponse
+from starlette.responses import HTMLResponse, RedirectResponse, Response
+from starlette.status import HTTP_429_TOO_MANY_REQUESTS
+from slowapi.errors import RateLimitExceeded
+from slowapi.middleware import SlowAPIMiddleware
 
 import static
 from app.config import SERVER_EXCEPTIONS_CODES
 from app.routes import auth, env, panel
+from app.dependencies import limiter
 
 routers = (panel.router, auth.router)
 app = FastAPI()
@@ -18,10 +22,18 @@ app.mount(
     StaticFiles(directory=static.__path__[0]),
     name="static",
 )
+app.state.limiter = limiter
+app.add_middleware(SlowAPIMiddleware)
 app.add_middleware(SessionMiddleware, secret_key=environ["SECRET_KEY"])
 
 for router in routers:
     app.include_router(router)
+
+
+@app.exception_handler(RateLimitExceeded)
+async def rate_limit_handler(_request: Request, _exc: RateLimitExceeded) -> Response:
+    return Response(status_code=HTTP_429_TOO_MANY_REQUESTS,
+                    content="Слишком много неудачных попыток. Попробуйте позже")
 
 
 @app.exception_handler(401)
