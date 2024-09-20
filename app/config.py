@@ -6,3 +6,4 @@ SERVER_EXCEPTIONS_CODES = (
     OSError, IOError, SyntaxError, Exception, TimeoutError, RuntimeError, KeyError, EnvironmentError, ImportError,
     ArithmeticError, NotImplementedError, RecursionError, ZeroDivisionError, PermissionError)
 RATE_LIMIT = "5/minute"
+ENABLE_RECAPTCHA = True

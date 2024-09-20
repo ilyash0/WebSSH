@@ -1,4 +1,4 @@
-async function login(username, password) {
+async function login(username, password, token) {
     show_loading_indicator();
 
     const XHR = new XMLHttpRequest();
@@ -18,7 +18,8 @@ async function login(username, password) {
     };
     let body = new URLSearchParams({
         'username': username,
-        'password': password
+        'password': password,
+        'client_secret': token
     })
     XHR.send(body);
 }

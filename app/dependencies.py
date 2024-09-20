@@ -3,13 +3,31 @@ from os import environ
 
 from fastapi import HTTPException, Request
 from jose import JWTError, jwt
+from requests import post
 from starlette.status import HTTP_401_UNAUTHORIZED
 from slowapi import Limiter
 from slowapi.util import get_remote_address
 
-from app.config import JWT_ALGORITHM
+from app.config import JWT_ALGORITHM, ENABLE_RECAPTCHA
 
 limiter = Limiter(key_func=get_remote_address)
+
+
+def verify_recaptcha(token: str) -> bool:
+    # Firstly register here: https://www.google.com/recaptcha/admin/create
+    if not ENABLE_RECAPTCHA:
+        return True
+
+    recaptcha_url = "https://www.google.com/recaptcha/api/siteverify"
+    payload = {
+        'secret': environ["RECAPTCHA_SECRET_KEY"],
+        'response': token
+    }
+    response = post(recaptcha_url, data=payload)
+    result = response.json()
+    if result.get('success', False) and result.get("score") > 0.5:
+        return True
+    return False
 
 
 def get_token(request: Request = Request) -> str:
