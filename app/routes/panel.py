@@ -8,10 +8,10 @@ from traceback import print_exception
 from starlette.status import HTTP_204_NO_CONTENT, HTTP_403_FORBIDDEN, HTTP_400_BAD_REQUEST, HTTP_200_OK
 
 from . import env
-from ..dependencies import is_authorized, get_token
+from ..dependencies import is_authorized, get_auth_token
 from ..config import UPLOAD_DIR
 
-router = APIRouter(prefix="/panel", tags=["Home app"], dependencies=[Depends(get_token)])
+router = APIRouter(prefix="/panel", tags=["Home app"], dependencies=[Depends(get_auth_token)])
 
 
 @router.get("")

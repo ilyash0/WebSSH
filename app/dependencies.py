@@ -30,7 +30,7 @@ def verify_recaptcha(token: str) -> bool:
     return False
 
 
-def get_token(request: Request = Request) -> str:
+def get_auth_token(request: Request = Request) -> str:
     token = request.session.get('users_access_token')
     if not token:
         raise HTTPException(status_code=HTTP_401_UNAUTHORIZED, detail='Вы не авторизованы')
@@ -50,7 +50,7 @@ def get_token(request: Request = Request) -> str:
 
 def is_authorized(request: Request) -> bool:
     try:
-        token = get_token(request)
+        token = get_auth_token(request)
         if token:
             return True
         return False
