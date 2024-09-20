@@ -8,7 +8,7 @@ from starlette.status import HTTP_401_UNAUTHORIZED
 from slowapi import Limiter
 from slowapi.util import get_remote_address
 
-from app.config import JWT_ALGORITHM, ENABLE_RECAPTCHA
+from app.config import JWT_ALGORITHM, ENABLE_RECAPTCHA, RECAPTCHA_AVAILABLE_SCORE
 
 limiter = Limiter(key_func=get_remote_address)
 
@@ -25,7 +25,7 @@ def verify_recaptcha(token: str) -> bool:
     }
     response = post(recaptcha_url, data=payload)
     result = response.json()
-    if result.get('success', False) and result.get("score") > 0.5:
+    if result.get('success', False) and result.get("score") > RECAPTCHA_AVAILABLE_SCORE:
         return True
     return False
 

@@ -6,7 +6,9 @@ from fastapi import FastAPI, HTTPException, Request
 from fastapi.staticfiles import StaticFiles
 from starlette.middleware.sessions import SessionMiddleware
 from starlette.responses import HTMLResponse, RedirectResponse, Response
-from starlette.status import HTTP_429_TOO_MANY_REQUESTS
+from starlette.status import (HTTP_429_TOO_MANY_REQUESTS, HTTP_401_UNAUTHORIZED,
+                              HTTP_404_NOT_FOUND, HTTP_405_METHOD_NOT_ALLOWED,
+                              HTTP_500_INTERNAL_SERVER_ERROR)
 from slowapi.errors import RateLimitExceeded
 from slowapi.middleware import SlowAPIMiddleware
 
@@ -36,13 +38,13 @@ async def rate_limit_handler(_request: Request, _exc: RateLimitExceeded) -> Resp
                     content="Слишком много неудачных попыток. Попробуйте позже")
 
 
-@app.exception_handler(401)
+@app.exception_handler(HTTP_401_UNAUTHORIZED)
 def unauthorized_exception_handler(_request: Request, exc: HTTPException) -> RedirectResponse:
     return RedirectResponse(f"/?alert={exc.detail}")
 
 
-@app.exception_handler(404)
-@app.exception_handler(405)
+@app.exception_handler(HTTP_404_NOT_FOUND)
+@app.exception_handler(HTTP_405_METHOD_NOT_ALLOWED)
 def not_found_exception_handler(_request: Request, _exc: HTTPException) -> HTMLResponse:
     template = env.get_template("404_not_found.html")
     page = template.render()
@@ -50,7 +52,7 @@ def not_found_exception_handler(_request: Request, _exc: HTTPException) -> HTMLR
 
 
 def server_exception_handler(_request: Request, exc: ValueError) -> HTMLResponse:
-    status_code = exc.status_code if hasattr(exc, "status_code") else 500
+    status_code = exc.status_code if hasattr(exc, "status_code") else HTTP_500_INTERNAL_SERVER_ERROR
     if hasattr(exc, "detail"):
         detail = exc.detail
     else:

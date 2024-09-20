@@ -7,3 +7,4 @@ SERVER_EXCEPTIONS_CODES = (
     ArithmeticError, NotImplementedError, RecursionError, ZeroDivisionError, PermissionError)
 RATE_LIMIT = "5/minute"
 ENABLE_RECAPTCHA = True
+RECAPTCHA_AVAILABLE_SCORE = 0.5
